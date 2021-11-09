@@ -13,11 +13,12 @@
 			<p class="text-xl">Play the Daily Puzzle</p>
 		</a>
 
-		<button
+		<a
+			href="/packs"
 			class="h-16 w-5/6 mt-8 flex justify-center items-center mx-auto border border-white rounded-md"
 		>
 			<p class="text-xl">Open Puzzle packs</p>
-		</button>
+		</a>
 		<a href="/how-to-play" class="mt-8 text-center underline text-xl mx-auto block">How to play</a>
 	</div>
 </main>

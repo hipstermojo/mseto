@@ -21,7 +21,7 @@
 	};
 
 	$: rowPos = -midPoint;
-	let offset = spring(52 * -midPoint, { stiffness: 0.25, damping: 0.3 });
+	let offset = spring(52 * -midPoint, { stiffness: 0.2, damping: 0.45 });
 
 	let canvasElem: HTMLElement;
 	let startY: number | undefined;

@@ -1,59 +1,97 @@
 <script lang="ts">
+	import { onDestroy, onMount } from 'svelte';
+	import { spring } from 'svelte/motion';
+
 	export let letters: string[];
+
+	const rowLength = letters.length;
+	const midPoint = Math.floor(rowLength / 2);
 
 	const move = (unit: number) => {
 		if (maxAllowedMovement(unit)) {
-			offset += unit;
+			rowPos += unit;
+		}
+	};
+	const maxAllowedMovement = (unit: number) => {
+		return rowPos + unit < 0 && rowPos + unit > -(letters.length + 1);
+	};
+
+	const maxAllowedScroll = (unit: number) => {
+		return -(rowPos + unit) < letters.length + 1 && -(rowPos + unit) > -1;
+	};
+
+	$: rowPos = -midPoint;
+	let offset = spring(52 * -midPoint, { stiffness: 0.25, damping: 0.3 });
+
+	let canvasElem: HTMLElement;
+	let startY: number | undefined;
+	let movedBy = 0;
+
+	let started = (ev: TouchEvent) => {
+		ev.preventDefault();
+
+		startY = ev.changedTouches[0].clientY;
+	};
+	let updateOffset = (ev: TouchEvent) => {
+		ev.preventDefault();
+		let touches = ev.changedTouches;
+
+		for (let i = 0; i < touches.length; i++) {
+			const { clientY } = touches[i];
+			const movY = clientY - 0;
+			const unitsMoved = Math.floor((movY - startY) / 52);
+			if (movedBy != unitsMoved) {
+				movedBy = unitsMoved;
+			}
+			if (maxAllowedScroll(unitsMoved)) {
+				offset.set(52 * rowPos + (movY - startY));
+			}
 		}
 	};
 
-	const maxAllowedMovement = (unit: number) =>
-		Math.abs(offset + unit) <= Math.floor(letters.length / 2);
+	let realignParent = (ev: TouchEvent) => {
+		ev.preventDefault();
+		const endY = ev.changedTouches[0].clientY;
+		const units = Math.floor((endY - startY) / 52);
+		let newPos: number;
 
-	$: getYOffset = (): number => {
-		if (offset != 0) {
-			return 52 * offset;
+		if (rowPos + units > 0) {
+			newPos = 0;
+		} else if (rowPos + units <= -letters.length) {
+			newPos = -letters.length + 1;
 		} else {
-			return 0;
+			newPos = rowPos + units;
 		}
+
+		rowPos = newPos;
+		offset.set(52 * rowPos);
 	};
-	$: offset = 0;
+
+	onMount(() => {
+		canvasElem.addEventListener('touchstart', started, false);
+		canvasElem.addEventListener('touchmove', updateOffset, false);
+		canvasElem.addEventListener('touchend', realignParent, false);
+	});
+
+	onDestroy(() => {
+		if (canvasElem) {
+			canvasElem.removeEventListener('touchstart', started);
+			canvasElem.removeEventListener('touchmove', updateOffset);
+			canvasElem.removeEventListener('touchend', realignParent);
+		}
+	});
 </script>
 
-<div style="transform: translateY({getYOffset()}px);" class="duration-300 transition-transform">
-	<button on:click={() => move(-1)} class="text-white mx-auto block h-12 mb-1">
-		<svg
-			class="w-6 h-6"
-			fill="none"
-			stroke="currentColor"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-			><path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M5 15l7-7 7 7"
-			/></svg
-		>
-	</button>
+<div style="transform: translateY({$offset}px);" class="relative h-screen">
 	{#each letters as letter}
 		<div class="bg-secondary flex flex-col mb-1 mr-1 items-center justify-center w-12 h-12">
-			<p class="uppercase text-xl">{letter}</p>
+			<p class="uppercase text-2xl">{letter}</p>
 		</div>
 	{/each}
-	<button on:click={() => move(1)} class="text-white mx-auto block h-12 mb-1"
-		><svg
-			class="w-6 h-6"
-			fill="none"
-			stroke="currentColor"
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-			><path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M19 9l-7 7-7-7"
-			/></svg
-		></button
-	>
+
+	<canvas
+		style="height: {52 * letters.length}px;"
+		bind:this={canvasElem}
+		class="absolute w-12 top-0"
+	/>
 </div>

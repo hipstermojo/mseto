@@ -18,6 +18,6 @@
 		>
 			<p class="text-xl">Open Puzzle packs</p>
 		</button>
-		<button class="mt-8 underline text-xl mx-auto block">How to play</button>
+		<a href="/how-to-play" class="mt-8 text-center underline text-xl mx-auto block">How to play</a>
 	</div>
 </main>

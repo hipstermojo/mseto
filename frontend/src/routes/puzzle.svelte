@@ -1,7 +1,11 @@
 <script lang="ts">
 	import ArrowBack from '../components/utils/icons/ArrowBack.svelte';
+	import GameSummary from '../components/GameSummary.svelte';
 	import PuzzleGrid from '../components/PuzzleGrid.svelte';
 	import ScoreCount from '../components/ScoreCount.svelte';
+	import { puzzleMachine } from '../store/index';
+
+	const { state } = puzzleMachine;
 </script>
 
 <main class="flex relative flex-col h-screen overflow-hidden justify-center bg-primary">
@@ -18,4 +22,7 @@
 	<div
 		class="h-24 absolute bottom-0 w-full bg-gradient-to-t from-primary via-primary to-transparent"
 	/>
+	{#if $state.context.completed}
+		<GameSummary />
+	{/if}
 </main>

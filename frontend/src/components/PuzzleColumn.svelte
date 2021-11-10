@@ -2,10 +2,13 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { spring } from 'svelte/motion';
 
-	export let letters: string[];
+	import type { PuzzleTile } from 'src/utils/types';
+	import { dailyPuzzle } from '../store';
 
-	const rowLength = letters.length;
-	const midPoint = Math.floor(rowLength / 2);
+	export let tiles: PuzzleTile[];
+	export let index: number;
+
+	const midPoint = $dailyPuzzle.rowPositions[index];
 
 	const move = (unit: number) => {
 		if (maxAllowedMovement(unit)) {
@@ -13,11 +16,11 @@
 		}
 	};
 	const maxAllowedMovement = (unit: number) => {
-		return rowPos + unit < 0 && rowPos + unit > -(letters.length + 1);
+		return rowPos + unit < 0 && rowPos + unit > -(tiles.length + 1);
 	};
 
 	const maxAllowedScroll = (unit: number) => {
-		return -(rowPos + unit) < letters.length + 1 && -(rowPos + unit) > -1;
+		return -(rowPos + unit) < tiles.length + 1 && -(rowPos + unit) > -1;
 	};
 
 	$: rowPos = -midPoint;
@@ -57,8 +60,8 @@
 
 		if (rowPos + units > 0) {
 			newPos = 0;
-		} else if (rowPos + units <= -letters.length) {
-			newPos = -letters.length + 1;
+		} else if (rowPos + units <= -tiles.length) {
+			newPos = -tiles.length + 1;
 		} else {
 			newPos = rowPos + units;
 		}
@@ -83,14 +86,17 @@
 </script>
 
 <div style="transform: translateY({$offset}px);" class="relative h-screen">
-	{#each letters as letter}
-		<div class="bg-secondary flex flex-col mb-1 mr-1 items-center justify-center w-12 h-12">
+	{#each tiles as { letter, done }}
+		<div
+			class="flex flex-col mb-1 mr-1 items-center justify-center w-12 h-12
+		{done ? 'bg-white' : 'bg-secondary'}"
+		>
 			<p class="uppercase text-2xl">{letter}</p>
 		</div>
 	{/each}
 
 	<canvas
-		style="height: {52 * (letters.length + 2)}px;"
+		style="height: {52 * (tiles.length + 2)}px;"
 		bind:this={canvasElem}
 		class="absolute w-12 top-0 -translate-y-12"
 	/>

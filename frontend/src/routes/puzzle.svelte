@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ArrowBack from '../components/utils/icons/ArrowBack.svelte';
 	import PuzzleGrid from '../components/PuzzleGrid.svelte';
+	import ScoreCount from '../components/ScoreCount.svelte';
 </script>
 
 <main class="flex relative flex-col h-screen overflow-hidden justify-center bg-primary">
@@ -9,7 +10,7 @@
 			<ArrowBack />
 		</a>
 		<div class="pr-8">
-			<h1 class="text-white font-semibold text-2xl">0/15</h1>
+			<ScoreCount />
 		</div>
 		<div class="h-6 absolute -bottom-6 w-full bg-gradient-to-b from-primary to-transparent" />
 	</div>

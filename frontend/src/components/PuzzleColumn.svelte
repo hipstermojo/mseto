@@ -8,7 +8,7 @@
 	export let tiles: PuzzleTile[];
 	export let index: number;
 
-	const { state } = puzzleMachine;
+	const { state, send } = puzzleMachine;
 	const midPoint = $state.context.rowPositions[index];
 
 	const move = (unit: number) => {
@@ -46,6 +46,9 @@
 			const unitsMoved = Math.floor((movY - startY) / 52);
 			if (movedBy != unitsMoved) {
 				movedBy = unitsMoved;
+				if (rowPos + movedBy <= 0 && rowPos + movedBy > -tiles.length) {
+					send('MOVE', { colIdx: index, rowIdx: Math.abs(rowPos + movedBy) });
+				}
 			}
 			if (maxAllowedScroll(unitsMoved)) {
 				offset.set(52 * rowPos + (movY - startY));
@@ -89,7 +92,7 @@
 <div style="transform: translateY({$offset}px);" class="relative h-screen">
 	{#each tiles as { letter, done }}
 		<div
-			class="flex flex-col mb-1 mr-1 items-center justify-center w-12 h-12
+			class="flex flex-col mb-1 mr-1 items-center justify-center w-12 h-12 duration-300 transition-colors
 		{done ? 'bg-white' : 'bg-secondary'}"
 		>
 			<p class="uppercase text-2xl">{letter}</p>

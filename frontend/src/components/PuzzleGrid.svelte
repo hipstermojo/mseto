@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	import { puzzleMachine } from '../store/index';
 
@@ -7,9 +7,9 @@
 
 	const { state, send } = puzzleMachine;
 
-	onMount(() => {
-		send('START');
-	});
+	onMount(() => send('START'));
+
+	onDestroy(() => send('EXIT'));
 </script>
 
 <div class="flex justify-center relative h-12 overflow-visible">

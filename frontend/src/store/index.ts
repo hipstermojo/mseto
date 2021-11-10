@@ -27,7 +27,7 @@ const _dailyPuzzle: Puzzle = {
 	duration: 0,
 	solutions: {
 		core: new Set(words),
-		extra: new Set(['choma', 'cheza', 'umoja', 'chora', 'mwema'])
+		extra: new Set(['choma', 'cheza', 'umoja', 'chora', 'mwema', 'umiza', 'mwiro'])
 	},
 	rowPositions: _puzzleCols.reduce((acc: number[], cur) => {
 		acc.push(Math.floor(cur.length / 2));
@@ -35,6 +35,8 @@ const _dailyPuzzle: Puzzle = {
 	}, []),
 	startedAt: null
 };
+
+let prevState = null;
 
 export function useMachine<T, U, V extends EventObject>(machine: StateMachine<T, U, V>) {
 	const service = interpret(machine);
@@ -44,9 +46,14 @@ export function useMachine<T, U, V extends EventObject>(machine: StateMachine<T,
 			set(state);
 		});
 
-		service.start();
+		if (prevState) {
+			service.start(prevState);
+		} else {
+			service.start();
+		}
 
 		return () => {
+			prevState = service.state;
 			service.stop();
 		};
 	});
@@ -59,9 +66,13 @@ export function useMachine<T, U, V extends EventObject>(machine: StateMachine<T,
 
 const _stopTimer = (context: Puzzle, event: PuzzleEvents) => {
 	const now = new Date();
-	const elapsed = context.startedAt.getTime() - now.getTime();
+	const elapsed = Math.floor((now.getTime() - context.startedAt.getTime()) / 1000);
 	const duration = context.duration + elapsed;
 	return { ...context, startedAt: null, duration };
+};
+
+const _startTimer = (context: Puzzle, event: PuzzleEvents) => {
+	return { ...context, startedAt: new Date() };
 };
 
 const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
@@ -73,27 +84,54 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 			on: {
 				START: {
 					target: 'running',
-					actions: assign((context, _) => {
-						// start timer
-						return { ...context, startedAt: new Date() };
-					})
+					actions: assign(_startTimer)
 				}
 			}
 		},
 		running: {
 			on: {
-				MOVE: [
-					{ target: 'completed', cond: (context, event) => false, actions: assign(_stopTimer) },
-					{ target: 'running' }
-				],
-				EXIT: { target: 'exit', actions: assign(_stopTimer) }
+				MOVE: {
+					target: 'running',
+					actions: [
+						assign((context, { colIdx, rowIdx }) => {
+							context.rowPositions[colIdx] = rowIdx;
+							return context;
+						}),
+						assign((context, _) => {
+							let word = context.cols.reduce((acc, cur, idx) => {
+								const pos = context.rowPositions[idx];
+								return acc + cur[pos].letter;
+							}, '');
+							if (context.solutions.core.has(word) || context.solutions.extra.has(word)) {
+								for (let i = 0; i < context.cols.length; i++) {
+									const column = context.cols[i];
+									const pos = context.rowPositions[i];
+									const tile = column[pos];
+									tile.done = true;
+								}
+							}
+							return context;
+						})
+					]
+				},
+				EXIT: { target: 'exit', actions: assign(_stopTimer) },
+				COMPLETED: {
+					target: 'completed',
+					actions: [
+						assign(_stopTimer),
+						assign((context, _) => {
+							context.completed = true;
+							return context;
+						})
+					]
+				}
 			}
 		},
 		completed: {
 			type: 'final'
 		},
 		exit: {
-			type: 'final'
+			on: { START: { target: 'running', actions: assign(_startTimer) } }
 		}
 	}
 });

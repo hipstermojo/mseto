@@ -1,1 +1,5 @@
-export type PuzzleEvents = { type: 'START' } | { type: 'MOVE' } | { type: 'EXIT' };
+export type PuzzleEvents =
+	| { type: 'START' }
+	| { type: 'MOVE'; rowIdx: number; colIdx: number }
+	| { type: 'EXIT' }
+	| { type: 'COMPLETED' };

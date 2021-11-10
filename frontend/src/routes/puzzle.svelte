@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	import ArrowBack from '../components/utils/icons/ArrowBack.svelte';
 	import PuzzleGrid from '../components/PuzzleGrid.svelte';
 	import ScoreCount from '../components/ScoreCount.svelte';

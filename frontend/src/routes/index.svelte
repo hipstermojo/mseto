@@ -1,5 +1,18 @@
-<script>
+<script lang="ts">
+	import { puzzleMachine } from '../store/index';
+
 	import SplashScreen from '../components/SplashScreen.svelte';
+
+	const formatSeconds = (secs: number) => {
+		if (secs < 60) {
+			return `${secs}s`;
+		} else {
+			const mins = Math.floor(secs / 60);
+			const remainingSecs = secs - mins * 60;
+			return `${mins}m ${remainingSecs}s`;
+		}
+	};
+	const { state } = puzzleMachine;
 </script>
 
 <main class="bg-primary">
@@ -10,7 +23,12 @@
 			href="/puzzle"
 			class="h-32 w-5/6 mt-32 bg-white mx-auto flex flex-col items-center justify-center text-primary rounded-md"
 		>
-			<p class="text-xl">Play the Daily Puzzle</p>
+			{#if $state.matches('completed')}
+				<p class="text-xl mb-2">Daily puzzle completed</p>
+				<p>Completed in {formatSeconds($state.context.duration)}</p>
+			{:else}
+				<p class="text-xl">Play the Daily Puzzle</p>
+			{/if}
 		</a>
 
 		<a

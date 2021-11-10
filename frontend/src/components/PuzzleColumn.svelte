@@ -90,8 +90,8 @@
 	{/each}
 
 	<canvas
-		style="height: {52 * letters.length}px;"
+		style="height: {52 * (letters.length + 2)}px;"
 		bind:this={canvasElem}
-		class="absolute w-12 top-0"
+		class="absolute w-12 top-0 -translate-y-12"
 	/>
 </div>

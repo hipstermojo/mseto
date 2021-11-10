@@ -3,12 +3,13 @@
 	import { spring } from 'svelte/motion';
 
 	import type { PuzzleTile } from 'src/utils/types';
-	import { dailyPuzzle } from '../store';
+	import { puzzleMachine } from '../store/index';
 
 	export let tiles: PuzzleTile[];
 	export let index: number;
 
-	const midPoint = $dailyPuzzle.rowPositions[index];
+	const { state } = puzzleMachine;
+	const midPoint = $state.context.rowPositions[index];
 
 	const move = (unit: number) => {
 		if (maxAllowedMovement(unit)) {

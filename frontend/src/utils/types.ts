@@ -10,4 +10,5 @@ export interface Puzzle {
 	completed: boolean;
 	duration: number;
 	rowPositions: number[];
+	startedAt: Date | null;
 }

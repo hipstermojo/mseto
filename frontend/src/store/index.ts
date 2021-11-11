@@ -4,22 +4,13 @@ import type { EventObject, StateMachine } from 'xstate';
 import { createMachine, interpret } from 'xstate';
 
 import type { Puzzle } from '../utils/types';
+import { generatePuzzle } from '../utils/puzzle';
+
 import type { PuzzleEvents } from './types';
 
 const words = ['wadhfa', 'uamuzi', 'mpango', 'wakati', 'tarehe'];
 
-const _puzzleCols = [
-	['t', 'u', 'm', 'w'],
-	['p', 'a'],
-	['a', 'm', 'd', 'k', 'r'],
-	['h', 'u', 'n', 'a', 'e'],
-	['f', 'h', 'g', 't', 'z'],
-	['o', 'i', 'a', 'e']
-].map((col) =>
-	col.map((letter) => {
-		return { letter, done: false };
-	})
-);
+const _puzzleCols = generatePuzzle(words);
 
 const _dailyPuzzle: Puzzle = {
 	id: '10-11-2021',
@@ -28,13 +19,15 @@ const _dailyPuzzle: Puzzle = {
 	duration: 0,
 	solutions: {
 		core: new Set(words),
-		extra: new Set(['wakazi', 'tamati', 'upanga', 'waragi'])
+		extra: new Set(['wakazi', 'makazi', 'tamati', 'upanga', 'waragi'])
 	},
+	foundWords: new Set(),
 	rowPositions: _puzzleCols.reduce((acc: number[], cur) => {
 		acc.push(Math.floor(cur.length / 2));
 		return acc;
 	}, []),
-	startedAt: null
+	startedAt: null,
+	wordExists: false
 };
 
 let prevState = null;
@@ -104,12 +97,16 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 								return acc + cur[pos].letter;
 							}, '');
 							if (context.solutions.core.has(word) || context.solutions.extra.has(word)) {
+								context.foundWords.add(word);
+								context.wordExists = true;
 								for (let i = 0; i < context.cols.length; i++) {
 									const column = context.cols[i];
 									const pos = context.rowPositions[i];
 									const tile = column[pos];
 									tile.done = true;
 								}
+							} else {
+								context.wordExists = false;
 							}
 							return context;
 						})

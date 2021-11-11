@@ -24,6 +24,7 @@
 		return -(rowPos + unit) < tiles.length + 1 && -(rowPos + unit) > -1;
 	};
 
+	$: highlighted = $state.context.wordExists;
 	$: rowPos = -midPoint;
 	let offset = spring(52 * -midPoint, { stiffness: 0.2, damping: 0.45 });
 
@@ -91,12 +92,24 @@
 </script>
 
 <div style="transform: translateY({$offset}px);" class="relative h-screen">
-	{#each tiles as { letter, done }}
-		<div
-			class="flex flex-col mb-1 mr-1 items-center justify-center w-12 h-12 duration-300 transition-colors
-		{done ? 'bg-white' : 'bg-secondary'}"
-		>
-			<p class="uppercase text-2xl">{letter}</p>
+	{#each tiles as { letter, done }, i}
+		<div class="relative w-12 h-12 mb-1 mr-1 overflow-hidden">
+			<div
+				class="flex flex-col items-center justify-center w-full h-full
+				delay-300
+				{done ? 'bg-white bg-opacity-50' : 'bg-secondary'}"
+			>
+				<p class="uppercase text-2xl">{letter}</p>
+			</div>
+			<div
+				class:translate-y-full={!done}
+				class:bg-opacity-70={!$state.context.completed &&
+					(!highlighted || i != $state.context.rowPositions[index])}
+				class="flex flex-col items-center justify-center w-full h-full bg-white
+				absolute top-0 duration-300 transition-all"
+			>
+				<p class="uppercase text-2xl">{letter}</p>
+			</div>
 		</div>
 	{/each}
 

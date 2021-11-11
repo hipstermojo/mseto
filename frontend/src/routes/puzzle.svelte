@@ -8,6 +8,10 @@
 	const { state } = puzzleMachine;
 </script>
 
+<svelte:head>
+	<meta name="description" content="Daily puzzle for 11-11-2021" />
+</svelte:head>
+
 <main class="flex relative flex-col h-screen overflow-hidden justify-center bg-primary">
 	<div class="absolute top-0 pt-6 z-10 flex justify-between w-full bg-primary">
 		<a href="/" title="back to main page" class="pl-8">

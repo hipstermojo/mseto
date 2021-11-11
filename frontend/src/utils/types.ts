@@ -7,6 +7,8 @@ export interface Puzzle {
 	id: string;
 	cols: PuzzleTile[][];
 	solutions: { core: Set<string>; extra: Set<string> };
+	wordExists: boolean;
+	foundWords: Set<string>;
 	completed: boolean;
 	duration: number;
 	rowPositions: number[];

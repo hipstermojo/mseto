@@ -17,4 +17,6 @@
 	}
 </script>
 
-<h1 class="text-white font-semibold text-2xl">{completedCount}/{tileCount}</h1>
+<h1 class="{completedCount == tileCount ? 'text-secondary' : 'text-white'} font-semibold text-2xl">
+	{completedCount}/{tileCount}
+</h1>

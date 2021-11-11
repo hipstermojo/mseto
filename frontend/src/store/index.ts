@@ -6,14 +6,15 @@ import { createMachine, interpret } from 'xstate';
 import type { Puzzle } from '../utils/types';
 import type { PuzzleEvents } from './types';
 
-const words = ['chama', 'ziara', 'uwezo', 'shida', 'mmoja'];
+const words = ['wadhfa', 'uamuzi', 'mpango', 'wakati', 'tarehe'];
 
 const _puzzleCols = [
-	['c', 'z', 'u', 's', 'm'],
-	['h', 'i', 'w', 'm'],
-	['a', 'e', 'i', 'o'],
-	['m', 'r', 'z', 'd', 'j'],
-	['a', 'o']
+	['t', 'u', 'm', 'w'],
+	['p', 'a'],
+	['a', 'm', 'd', 'k', 'r'],
+	['h', 'u', 'n', 'a', 'e'],
+	['f', 'h', 'g', 't', 'z'],
+	['o', 'i', 'a', 'e']
 ].map((col) =>
 	col.map((letter) => {
 		return { letter, done: false };
@@ -27,7 +28,7 @@ const _dailyPuzzle: Puzzle = {
 	duration: 0,
 	solutions: {
 		core: new Set(words),
-		extra: new Set(['choma', 'cheza', 'umoja', 'chora', 'mwema', 'umiza', 'mwiro'])
+		extra: new Set(['wakazi', 'tamati', 'upanga', 'waragi'])
 	},
 	rowPositions: _puzzleCols.reduce((acc: number[], cur) => {
 		acc.push(Math.floor(cur.length / 2));

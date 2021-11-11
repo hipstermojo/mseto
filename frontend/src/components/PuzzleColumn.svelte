@@ -71,6 +71,7 @@
 		}
 
 		rowPos = newPos;
+		send('MOVE', { colIdx: index, rowIdx: -rowPos });
 		offset.set(52 * rowPos);
 	};
 

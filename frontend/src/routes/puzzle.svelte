@@ -26,7 +26,7 @@
 	<div
 		class="h-24 absolute bottom-0 w-full bg-gradient-to-t from-primary via-primary to-transparent"
 	/>
-	{#if $state.context.completed}
+	{#if $state.matches('completed')}
 		<GameSummary />
 	{/if}
 </main>

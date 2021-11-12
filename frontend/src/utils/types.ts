@@ -9,7 +9,7 @@ export interface Puzzle {
 	solutions: { core: Set<string>; extra: Set<string> };
 	wordExists: boolean;
 	foundWords: Set<string>;
-	completed: boolean;
+	tilesCompleted: number;
 	duration: number;
 	rowPositions: number[];
 	startedAt: Date | null;

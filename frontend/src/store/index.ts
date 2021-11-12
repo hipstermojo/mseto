@@ -8,18 +8,103 @@ import { generatePuzzle } from '../utils/puzzle';
 
 import type { PuzzleEvents } from './types';
 
-const words = ['wadhfa', 'uamuzi', 'mpango', 'wakati', 'tarehe'];
+const words = ['tamaa', 'ndani', 'neema', 'dunia', 'kesho', 'mvuke'];
 
-const _puzzleCols = generatePuzzle(words);
+// const _puzzleCols = generatePuzzle(words);
+const _puzzleCols = [
+	[
+		{ letter: 'k', done: false },
+		{ letter: 't', done: false },
+		{ letter: 'm', done: false },
+		{ letter: 'd', done: false },
+		{ letter: 'n', done: false }
+	],
+	[
+		{ letter: 'e', done: false },
+		{ letter: 'v', done: false },
+		{ letter: 'd', done: false },
+		{ letter: 'a', done: false },
+		{ letter: 'u', done: false }
+	],
+	[
+		{ letter: 'n', done: false },
+		{ letter: 'm', done: false },
+		{ letter: 'a', done: false },
+		{ letter: 'u', done: false },
+		{ letter: 's', done: false },
+		{ letter: 'e', done: false }
+	],
+	[
+		{ letter: 'k', done: false },
+		{ letter: 'a', done: false },
+		{ letter: 'h', done: false },
+		{ letter: 'm', done: false },
+		{ letter: 'n', done: false },
+		{ letter: 'i', done: false }
+	],
+	[
+		{ letter: 'i', done: false },
+		{ letter: 'o', done: false },
+		{ letter: 'e', done: false },
+		{ letter: 'a', done: false }
+	]
+];
 
 const _dailyPuzzle: Puzzle = {
-	id: '10-11-2021',
+	id: '12-11-2021',
 	cols: _puzzleCols,
-	completed: false,
 	duration: 0,
 	solutions: {
 		core: new Set(words),
-		extra: new Set(['wakazi', 'makazi', 'tamati', 'upanga', 'waragi'])
+		extra: new Set([
+			'ndama',
+			'ndume',
+			'ndumo',
+			'nduni',
+			'nauni',
+			'nasia',
+			'nusia',
+			'ndeme',
+			'nunia',
+			'nusia',
+			'nauni',
+			'namna',
+			'kemia',
+			'kania',
+			'kesha',
+			'kauka',
+			'kasha',
+			'kasma',
+			'kasia',
+			'kunia',
+			'kuuni',
+			'deuka',
+			'deski',
+			'desia',
+			'dumaa',
+			'dumia',
+			'mesha',
+			'mvuko',
+			'mvumo',
+			'mdeke',
+			'mdeni',
+			'mamia',
+			'maana',
+			'mauko',
+			'maume',
+			'masia',
+			'teuka',
+			'tania',
+			'tamka',
+			'tamko',
+			'tamia',
+			'tauni',
+			'tasia',
+			'tunia',
+			'tumia',
+			'tuama',
+			'tusia'
+		])
 	},
 	foundWords: new Set(),
 	rowPositions: _puzzleCols.reduce((acc: number[], cur) => {
@@ -27,7 +112,8 @@ const _dailyPuzzle: Puzzle = {
 		return acc;
 	}, []),
 	startedAt: null,
-	wordExists: false
+	wordExists: false,
+	tilesCompleted: 0
 };
 
 let prevState = null;
@@ -98,12 +184,16 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 							}, '');
 							if (context.solutions.core.has(word) || context.solutions.extra.has(word)) {
 								context.foundWords.add(word);
+
 								context.wordExists = true;
 								for (let i = 0; i < context.cols.length; i++) {
 									const column = context.cols[i];
 									const pos = context.rowPositions[i];
 									const tile = column[pos];
-									tile.done = true;
+									if (!tile.done) {
+										context.tilesCompleted++;
+										tile.done = true;
+									}
 								}
 							} else {
 								context.wordExists = false;
@@ -115,13 +205,7 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 				EXIT: { target: 'exit', actions: assign(_stopTimer) },
 				COMPLETED: {
 					target: 'completed',
-					actions: [
-						assign(_stopTimer),
-						assign((context, _) => {
-							context.completed = true;
-							return context;
-						})
-					]
+					actions: assign(_stopTimer)
 				}
 			}
 		},

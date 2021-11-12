@@ -9,10 +9,13 @@
 		} else {
 			const mins = Math.floor(secs / 60);
 			const remainingSecs = secs - mins * 60;
-			return `${mins}m ${remainingSecs}s`;
+			return `${mins}m ${remainingSecs == 0 ? '' : remainingSecs + 's'}`;
 		}
 	};
 	const { state } = puzzleMachine;
+
+	const totalTiles = $state.context.cols.reduce((total, col) => total + col.length, 0);
+	const completedTiles = Math.floor(($state.context.tilesCompleted * 100) / totalTiles);
 </script>
 
 <main class="bg-primary">
@@ -28,6 +31,9 @@
 				<p>Completed in {formatSeconds($state.context.duration)}</p>
 			{:else}
 				<p class="text-xl">Play the Daily Puzzle</p>
+				{#if $state.context.duration > 0}
+					<p>{completedTiles}% complete</p>
+				{/if}
 			{/if}
 		</a>
 

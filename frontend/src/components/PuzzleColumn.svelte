@@ -103,7 +103,7 @@
 			</div>
 			<div
 				class:translate-y-full={!done}
-				class:bg-opacity-50={!$state.context.completed &&
+				class:bg-opacity-50={!$state.matches('completed') &&
 					(!highlighted || i != $state.context.rowPositions[index])}
 				class="flex flex-col items-center justify-center w-full h-full bg-white
 				absolute top-0 duration-300 transition-all"

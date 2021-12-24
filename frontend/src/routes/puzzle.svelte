@@ -1,21 +1,22 @@
 <script lang="ts">
-	import ArrowBack from '../components/utils/icons/ArrowBack.svelte';
+	import IconSet from '../components/utils/icons/IconSet.svelte';
 	import GameSummary from '../components/GameSummary.svelte';
 	import PuzzleGrid from '../components/PuzzleGrid.svelte';
 	import ScoreCount from '../components/ScoreCount.svelte';
 	import { puzzleMachine } from '../store/index';
 
 	const { state } = puzzleMachine;
+	const today = new Date().toDateString();
 </script>
 
 <svelte:head>
-	<meta name="description" content="Daily puzzle for 11-11-2021" />
+	<meta name="description" content="Daily puzzle for {today}" />
 </svelte:head>
 
 <main class="flex relative flex-col h-screen overflow-hidden justify-center bg-primary">
 	<div class="absolute top-0 pt-6 z-10 flex justify-between w-full bg-primary">
 		<a href="/" title="back to main page" class="pl-8">
-			<ArrowBack />
+			<IconSet type="arrow-back" />
 		</a>
 		<div class="pr-8">
 			<ScoreCount />

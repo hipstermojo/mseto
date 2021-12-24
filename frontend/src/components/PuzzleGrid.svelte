@@ -7,9 +7,17 @@
 
 	const { state, send } = puzzleMachine;
 
-	onMount(() => send('START'));
+	onMount(() => {
+		if (!$state.matches('completed')) {
+			send('START');
+		}
+	});
 
-	onDestroy(() => send('EXIT'));
+	onDestroy(() => {
+		if (!$state.matches('completed')) {
+			send('EXIT');
+		}
+	});
 </script>
 
 <div class="flex justify-center relative h-12 overflow-visible">

@@ -50,8 +50,10 @@ const _puzzleCols = [
 	]
 ];
 
+const today = new Date();
+
 const _dailyPuzzle: Puzzle = {
-	id: '12-11-2021',
+	id: today.toDateString(),
 	cols: _puzzleCols,
 	duration: 0,
 	solutions: {
@@ -113,7 +115,8 @@ const _dailyPuzzle: Puzzle = {
 	}, []),
 	startedAt: null,
 	wordExists: false,
-	tilesCompleted: 0
+	tilesCompleted: 0,
+	totalTiles: _puzzleCols.reduce((acc, cur) => acc + cur.length, 0)
 };
 
 let prevState = null;
@@ -155,6 +158,9 @@ const _startTimer = (context: Puzzle, event: PuzzleEvents) => {
 	return { ...context, startedAt: new Date() };
 };
 
+const _isPuzzleComplete = (context: Puzzle, event: PuzzleEvents) =>
+	context.tilesCompleted == context.totalTiles;
+
 const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 	id: 'puzzle',
 	initial: 'initial',
@@ -171,7 +177,7 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 		running: {
 			on: {
 				MOVE: {
-					target: 'running',
+					target: 'checkIfCompleted',
 					actions: [
 						assign((context, { colIdx, rowIdx }) => {
 							context.rowPositions[colIdx] = rowIdx;
@@ -202,12 +208,14 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 						})
 					]
 				},
-				EXIT: { target: 'exit', actions: assign(_stopTimer) },
-				COMPLETED: {
-					target: 'completed',
-					actions: assign(_stopTimer)
-				}
+				EXIT: { target: 'exit', actions: assign(_stopTimer) }
 			}
+		},
+		checkIfCompleted: {
+			always: [
+				{ target: 'completed', cond: _isPuzzleComplete, actions: assign(_stopTimer) },
+				{ target: 'running' }
+			]
 		},
 		completed: {
 			type: 'final'

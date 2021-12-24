@@ -41,6 +41,11 @@
 		ev.preventDefault();
 		let touches = ev.changedTouches;
 
+		// Stop running if the game has ended. This is done to prevent invalid transitions from being made and also stop moving the maze
+		if ($state.matches('completed')) {
+			return;
+		}
+
 		for (let i = 0; i < touches.length; i++) {
 			const { clientY } = touches[i];
 			const movY = clientY - 0;
@@ -59,6 +64,9 @@
 
 	let realignParent = (ev: TouchEvent) => {
 		ev.preventDefault();
+		if ($state.matches('completed')) {
+			return;
+		}
 		const endY = ev.changedTouches[0].clientY;
 		const units = Math.floor((endY - startY) / 52);
 		let newPos: number;

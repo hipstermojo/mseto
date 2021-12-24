@@ -14,7 +14,7 @@
 	};
 	const { state } = puzzleMachine;
 
-	const totalTiles = $state.context.cols.reduce((total, col) => total + col.length, 0);
+	const totalTiles = $state.context.totalTiles;
 	const completedTiles = Math.floor(($state.context.tilesCompleted * 100) / totalTiles);
 </script>
 

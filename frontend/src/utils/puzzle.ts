@@ -1,18 +1,6 @@
 import type { Puzzle, PuzzleTile } from './types';
 
-export const generatePuzzleTiles = (words: string[]): PuzzleTile[][] => {
-	let columns = words.reduce((result: Set<string>[], word) => {
-		for (let i = 0; i < word.length; i++) {
-			const letter = word[i];
-			if (result[i]) {
-				result[i].add(letter);
-			} else {
-				result.push(new Set([letter]));
-			}
-		}
-		return result;
-	}, []);
-
+export const columnsToTiles = (columns: string[][]): PuzzleTile[][] => {
 	return columns.map((col) =>
 		[...col].map((letter: string) => {
 			return { letter, done: false };

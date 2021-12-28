@@ -1,64 +1,24 @@
 <script lang="ts" context="module">
-	import { generatePuzzleTiles } from '../utils/puzzle';
+	import { columnsToTiles } from '../utils/puzzle';
 
-	export async function load(_) {
-		const core = ['afueni', 'habari', 'kamili', 'likizo', 'sabuni', 'tayari', 'vibaya'];
-		const extra = [
-			'himiza',
-			'himila',
-			'himili',
-			'himaya',
-			'hamira',
-			'hamali',
-			'hakiri',
-			'likiza',
-			'labizi',
-			'lakini',
-			'lakiri',
-			'sikiza',
-			'sikini',
-			'samani',
-			'sabini',
-			'sabili',
-			'sayari',
-			'sakiza',
-			'sakini',
-			'sakana',
-			'afuana',
-			'afyuni',
-			'afkani',
-			'kibiri',
-			'kiburi',
-			'kibano',
-			'kibali',
-			'kikiri',
-			'kikero',
-			'kikuli',
-			'kikazo',
-			'kikaza',
-			'kamera',
-			'kamana',
-			'kamani',
-			'kamari',
-			'kabiri',
-			'kabila',
-			'kabili',
-			'kaburi',
-			'kabuli',
-			'kabana',
-			'kabari',
-			'kayaya',
-			'timiza',
-			'timazi',
-			'tamani',
-			'tabiri',
-			'tabano',
-			'tabana',
-			'tayana',
-			'takana'
-		];
+	export async function load({ fetch }) {
+		const url = '/api/puzzles.json';
+		const res = await fetch(url);
 
-		const cols = generatePuzzleTiles(core);
+		if (res.ok) {
+			const data = await res.json();
+
+			return {
+				props: { data: { ...data, cols: columnsToTiles(data.cols) } }
+			};
+		}
+		// TODO: Add error handling
+
+		const core = [];
+		const extra = [];
+
+		const cols = columnsToTiles([]);
+
 		return {
 			status: 200,
 			props: {

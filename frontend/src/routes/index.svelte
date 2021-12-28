@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { puzzleMachine } from '../store/index';
+	import { puzzleMachine } from '$lib/store/index';
 
-	import SplashScreen from '../components/SplashScreen.svelte';
+	import SplashScreen from '$lib/components/SplashScreen.svelte';
 
 	const formatSeconds = (secs: number) => {
 		if (secs < 60) {

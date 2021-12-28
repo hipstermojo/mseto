@@ -1,4 +1,4 @@
-import type { Puzzle } from 'src/utils/types';
+import type { Puzzle } from '$lib/utils/types';
 
 export type PuzzleEvents =
 	| { type: 'START'; puzzle: Puzzle }

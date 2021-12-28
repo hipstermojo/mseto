@@ -2,8 +2,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { spring } from 'svelte/motion';
 
-	import type { PuzzleTile } from 'src/utils/types';
-	import { puzzleMachine } from '../store/index';
+	import type { PuzzleTile } from '$lib/utils/types';
+	import { puzzleMachine } from '$lib/store/index';
 
 	export let tiles: PuzzleTile[];
 	export let index: number;

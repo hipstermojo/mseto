@@ -1,5 +1,5 @@
 <script>
-	import IconSet from '../../components/utils/icons/IconSet.svelte';
+	import IconSet from '$lib/components/utils/icons/IconSet.svelte';
 </script>
 
 <main class="bg-primary text-white px-4 pb-20 min-h-screen">

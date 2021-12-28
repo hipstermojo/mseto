@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 
-	import { puzzleMachine } from '../store/index';
+	import { puzzleMachine } from '$lib/store/index';
 
 	import PuzzleColumn from './PuzzleColumn.svelte';
 

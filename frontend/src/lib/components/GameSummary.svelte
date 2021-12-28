@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { puzzleMachine } from '../store';
+	import { puzzleMachine } from '$lib/store';
 
 	import { fade } from 'svelte/transition';
 

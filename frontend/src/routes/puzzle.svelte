@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	import { columnsToTiles } from '../utils/puzzle';
+	import { columnsToTiles } from '$lib/utils/puzzle';
 
 	export async function load({ fetch }) {
 		const url = '/api/puzzles.json';
@@ -33,14 +33,14 @@
 </script>
 
 <script lang="ts">
-	import IconSet from '../components/utils/icons/IconSet.svelte';
-	import GameSummary from '../components/GameSummary.svelte';
-	import PuzzleGrid from '../components/PuzzleGrid.svelte';
-	import ScoreCount from '../components/ScoreCount.svelte';
+	import IconSet from '$lib/components/utils/icons/IconSet.svelte';
+	import GameSummary from '$lib/components/GameSummary.svelte';
+	import PuzzleGrid from '$lib/components/PuzzleGrid.svelte';
+	import ScoreCount from '$lib/components/ScoreCount.svelte';
 
-	import { puzzleMachine } from '../store/index';
-	import { createPuzzle } from '../utils/puzzle';
-	import type { PuzzleTile } from '../utils/types';
+	import { puzzleMachine } from '$lib/store/index';
+	import { createPuzzle } from '$lib/utils/puzzle';
+	import type { PuzzleTile } from '$lib/utils/types';
 
 	export let data: { core: string[]; extra: string[]; cols: PuzzleTile[][] };
 

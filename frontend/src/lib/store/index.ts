@@ -3,8 +3,8 @@ import { assign } from 'xstate';
 import type { EventObject, StateMachine } from 'xstate';
 import { createMachine, interpret } from 'xstate';
 
-import type { Puzzle } from '../utils/types';
-import { createPuzzle } from '../utils/puzzle';
+import type { Puzzle } from '$lib/utils/types';
+import { createPuzzle } from '$lib/utils/puzzle';
 
 import type { PuzzleEvents } from './types';
 

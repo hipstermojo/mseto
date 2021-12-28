@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { puzzleMachine } from '../store/index';
+	import { puzzleMachine } from '$lib/store/index';
 
 	const { state } = puzzleMachine;
 

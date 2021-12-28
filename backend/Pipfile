@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "==0.70.1"
+uvicorn = {version = "==0.16.0", extras = ["standard"]}
+
+[dev-packages]
+autopep8 = "*"
+pylint = "*"
+
+[requires]
+python_version = "3.9"

@@ -8,8 +8,8 @@
 	const { state, send } = puzzleMachine;
 
 	onMount(() => {
-		if (!$state.matches('completed')) {
-			send('START');
+		if (!($state.matches('completed') || $state.matches('running'))) {
+			send('RESUME');
 		}
 	});
 

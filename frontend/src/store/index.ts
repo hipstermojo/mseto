@@ -1,130 +1,33 @@
-import { readable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { assign } from 'xstate';
 import type { EventObject, StateMachine } from 'xstate';
 import { createMachine, interpret } from 'xstate';
 
 import type { Puzzle } from '../utils/types';
-import { generatePuzzle } from '../utils/puzzle';
+import { extraWords, generatePuzzle, createPuzzle } from '../utils/puzzle';
 
 import type { PuzzleEvents } from './types';
 
 const words = ['tamaa', 'ndani', 'neema', 'dunia', 'kesho', 'mvuke'];
 
 // const _puzzleCols = generatePuzzle(words);
-const _puzzleCols = [
-	[
-		{ letter: 'k', done: false },
-		{ letter: 't', done: false },
-		{ letter: 'm', done: false },
-		{ letter: 'd', done: false },
-		{ letter: 'n', done: false }
-	],
-	[
-		{ letter: 'e', done: false },
-		{ letter: 'v', done: false },
-		{ letter: 'd', done: false },
-		{ letter: 'a', done: false },
-		{ letter: 'u', done: false }
-	],
-	[
-		{ letter: 'n', done: false },
-		{ letter: 'm', done: false },
-		{ letter: 'a', done: false },
-		{ letter: 'u', done: false },
-		{ letter: 's', done: false },
-		{ letter: 'e', done: false }
-	],
-	[
-		{ letter: 'k', done: false },
-		{ letter: 'a', done: false },
-		{ letter: 'h', done: false },
-		{ letter: 'm', done: false },
-		{ letter: 'n', done: false },
-		{ letter: 'i', done: false }
-	],
-	[
-		{ letter: 'i', done: false },
-		{ letter: 'o', done: false },
-		{ letter: 'e', done: false },
-		{ letter: 'a', done: false }
-	]
+
+const cols = [
+	['k', 't', 'm', 'd', 'n'],
+	['e', 'v', 'd', 'a', 'u'],
+	['n', 'm', 'a', 'u', 's', 'e'],
+	['k', 'a', 'h', 'm', 'n', 'i'],
+	['i', 'o', 'e', 'a']
 ];
 
-const today = new Date();
-
-const _dailyPuzzle: Puzzle = {
-	id: today.toDateString(),
-	cols: _puzzleCols,
-	duration: 0,
-	solutions: {
-		core: new Set(words),
-		extra: new Set([
-			'ndama',
-			'ndume',
-			'ndumo',
-			'nduni',
-			'nauni',
-			'nasia',
-			'nusia',
-			'ndeme',
-			'nunia',
-			'nusia',
-			'nauni',
-			'namna',
-			'kemia',
-			'kania',
-			'kesha',
-			'kauka',
-			'kasha',
-			'kasma',
-			'kasia',
-			'kunia',
-			'kuuni',
-			'deuka',
-			'deski',
-			'desia',
-			'dumaa',
-			'dumia',
-			'mesha',
-			'mvuko',
-			'mvumo',
-			'mdeke',
-			'mdeni',
-			'mamia',
-			'maana',
-			'mauko',
-			'maume',
-			'masia',
-			'teuka',
-			'tania',
-			'tamka',
-			'tamko',
-			'tamia',
-			'tauni',
-			'tasia',
-			'tunia',
-			'tumia',
-			'tuama',
-			'tusia'
-		])
-	},
-	foundWords: new Set(),
-	rowPositions: _puzzleCols.reduce((acc: number[], cur) => {
-		acc.push(Math.floor(cur.length / 2));
-		return acc;
-	}, []),
-	startedAt: null,
-	wordExists: false,
-	tilesCompleted: 0,
-	totalTiles: _puzzleCols.reduce((acc, cur) => acc + cur.length, 0)
-};
+// const _dailyPuzzle: Puzzle = createPuzzle(words, extraWords, cols);
 
 let prevState = null;
 
-export function useMachine<T, U, V extends EventObject>(machine: StateMachine<T, U, V>) {
+function useMachine<T, U, V extends EventObject>(machine: StateMachine<T, U, V>) {
 	const service = interpret(machine);
 
-	const store = readable(service.initialState, (set) => {
+	const store = writable(service.initialState, (set) => {
 		service.onTransition((state) => {
 			set(state);
 		});
@@ -164,13 +67,17 @@ const _isPuzzleComplete = (context: Puzzle, event: PuzzleEvents) =>
 const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 	id: 'puzzle',
 	initial: 'initial',
-	context: _dailyPuzzle,
+	context: createPuzzle(),
 	states: {
 		initial: {
 			on: {
-				START: {
+				RESUME: {
 					target: 'running',
 					actions: assign(_startTimer)
+				},
+				START: {
+					target: 'running',
+					actions: [assign((_, { puzzle }) => puzzle), assign(_startTimer)]
 				}
 			}
 		},
@@ -221,7 +128,7 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 			type: 'final'
 		},
 		exit: {
-			on: { START: { target: 'running', actions: assign(_startTimer) } }
+			on: { RESUME: { target: 'running', actions: assign(_startTimer) } }
 		}
 	}
 });

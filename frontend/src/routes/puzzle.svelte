@@ -1,22 +1,70 @@
 <script lang="ts" context="module">
-	import { extraWords } from '../utils/puzzle';
+	import { generatePuzzleTiles } from '../utils/puzzle';
 
 	export async function load(_) {
-		const words = ['tamaa', 'ndani', 'neema', 'dunia', 'kesho', 'mvuke'];
-
-		const cols = [
-			['k', 't', 'm', 'd', 'n'],
-			['e', 'v', 'd', 'a', 'u'],
-			['n', 'm', 'a', 'u', 's', 'e'],
-			['k', 'a', 'h', 'm', 'n', 'i'],
-			['i', 'o', 'e', 'a']
+		const core = ['afueni', 'habari', 'kamili', 'likizo', 'sabuni', 'tayari', 'vibaya'];
+		const extra = [
+			'himiza',
+			'himila',
+			'himili',
+			'himaya',
+			'hamira',
+			'hamali',
+			'hakiri',
+			'likiza',
+			'labizi',
+			'lakini',
+			'lakiri',
+			'sikiza',
+			'sikini',
+			'samani',
+			'sabini',
+			'sabili',
+			'sayari',
+			'sakiza',
+			'sakini',
+			'sakana',
+			'afuana',
+			'afyuni',
+			'afkani',
+			'kibiri',
+			'kiburi',
+			'kibano',
+			'kibali',
+			'kikiri',
+			'kikero',
+			'kikuli',
+			'kikazo',
+			'kikaza',
+			'kamera',
+			'kamana',
+			'kamani',
+			'kamari',
+			'kabiri',
+			'kabila',
+			'kabili',
+			'kaburi',
+			'kabuli',
+			'kabana',
+			'kabari',
+			'kayaya',
+			'timiza',
+			'timazi',
+			'tamani',
+			'tabiri',
+			'tabano',
+			'tabana',
+			'tayana',
+			'takana'
 		];
+
+		const cols = generatePuzzleTiles(core);
 		return {
 			status: 200,
 			props: {
 				data: {
-					core: words,
-					extra: extraWords,
+					core,
+					extra,
 					cols
 				}
 			}
@@ -32,8 +80,9 @@
 
 	import { puzzleMachine } from '../store/index';
 	import { createPuzzle } from '../utils/puzzle';
+	import type { PuzzleTile } from '../utils/types';
 
-	export let data: { core: string[]; extra: string[]; cols: string[][] };
+	export let data: { core: string[]; extra: string[]; cols: PuzzleTile[][] };
 
 	const { state, send } = puzzleMachine;
 	const today = new Date().toDateString();

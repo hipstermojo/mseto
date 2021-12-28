@@ -4,23 +4,9 @@ import type { EventObject, StateMachine } from 'xstate';
 import { createMachine, interpret } from 'xstate';
 
 import type { Puzzle } from '../utils/types';
-import { extraWords, generatePuzzle, createPuzzle } from '../utils/puzzle';
+import { createPuzzle } from '../utils/puzzle';
 
 import type { PuzzleEvents } from './types';
-
-const words = ['tamaa', 'ndani', 'neema', 'dunia', 'kesho', 'mvuke'];
-
-// const _puzzleCols = generatePuzzle(words);
-
-const cols = [
-	['k', 't', 'm', 'd', 'n'],
-	['e', 'v', 'd', 'a', 'u'],
-	['n', 'm', 'a', 'u', 's', 'e'],
-	['k', 'a', 'h', 'm', 'n', 'i'],
-	['i', 'o', 'e', 'a']
-];
-
-// const _dailyPuzzle: Puzzle = createPuzzle(words, extraWords, cols);
 
 let prevState = null;
 

@@ -11,15 +11,6 @@
 	const { state, send } = puzzleMachine;
 	const midPoint = $state.context.rowPositions[index];
 
-	const move = (unit: number) => {
-		if (maxAllowedMovement(unit)) {
-			rowPos += unit;
-		}
-	};
-	const maxAllowedMovement = (unit: number) => {
-		return rowPos + unit < 0 && rowPos + unit > -(tiles.length + 1);
-	};
-
 	const maxAllowedScroll = (unit: number) => {
 		return -(rowPos + unit) < tiles.length + 1 && -(rowPos + unit) > -1;
 	};

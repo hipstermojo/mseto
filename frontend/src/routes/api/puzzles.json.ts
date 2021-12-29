@@ -15,21 +15,5 @@ export async function get({ query }: IncomingRequest): Promise<EndpointOutput> {
 			body: { ...data }
 		};
 	}
-	// TODO: Add error handling
-
-	const core = [];
-	const extra = [];
-
-	const cols = [];
-
-	return {
-		status: 200,
-		body: {
-			data: {
-				core,
-				extra,
-				cols
-			}
-		}
-	};
+	return { status: res.status };
 }

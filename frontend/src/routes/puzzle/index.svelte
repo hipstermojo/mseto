@@ -1,20 +1,31 @@
 <script lang="ts" context="module">
+	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+
 	import { columnsToTiles } from '$lib/utils/puzzle';
 
 	export async function load({ fetch, page }: LoadInput): Promise<LoadOutput> {
 		let id = page.query.get('id');
+
+		const statusMsg = {
+			503: 'Unable to reach server',
+			422: 'Invalid request made to server',
+			404: 'Requested puzzle does not exist'
+		};
 		if (!id) {
 			const url = '/api/packs/daily.json';
 			const res = await fetch(url);
 
 			if (res.ok) {
 				const { id: puzzleID } = await res.json();
-
 				id = puzzleID;
 			} else {
-				return { status: 400 };
+				if (statusMsg[res.status]) {
+					return { status: res.status, error: statusMsg[res.status] };
+				}
+				return { status: res.status };
 			}
 		}
+
 		const url = `/api/puzzles.json?id=${id}`;
 		const res = await fetch(url);
 
@@ -25,23 +36,11 @@
 				props: { data: { ...data, cols: columnsToTiles(data.cols) } }
 			};
 		}
-		// TODO: Add error handling
 
-		const core = [];
-		const extra = [];
-
-		const cols = columnsToTiles([]);
-
-		return {
-			status: 200,
-			props: {
-				data: {
-					core,
-					extra,
-					cols
-				}
-			}
-		};
+		if (statusMsg[res.status]) {
+			return { status: res.status, error: statusMsg[res.status] };
+		}
+		return { status: res.status };
 	}
 </script>
 
@@ -54,7 +53,6 @@
 	import { puzzleMachine } from '$lib/store/index';
 	import { createPuzzle } from '$lib/utils/puzzle';
 	import type { PuzzleTile } from '$lib/utils/types';
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
 
 	export let data: { core: string[]; extra: string[]; cols: PuzzleTile[][] };
 

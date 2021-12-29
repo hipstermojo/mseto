@@ -2,14 +2,18 @@ from itertools import product
 import random
 from typing import List, Set
 
-words = ['afueni',
-         'habari',
-         'kamili',
-         'likizo',
-         'sabuni',
-         'tayari',
-         'vibaya',
-         ]
+
+words = [
+    "haswa",
+    "jioni",
+    "kadha",
+    "kambi",
+    "miaka",
+    "mrefu",
+    "uvumi",
+    "vibao",
+    "zaidi"
+]
 
 
 def get_all_possible_words(cols: List[Set[str]]) -> List[str]:

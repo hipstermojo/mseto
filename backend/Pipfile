@@ -4,7 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+aerich = "==0.6.1"
 fastapi = "==0.70.1"
+tortoise-orm = "==0.17.8"
 uvicorn = {version = "==0.16.0", extras = ["standard"]}
 
 [dev-packages]

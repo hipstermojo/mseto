@@ -5,8 +5,8 @@ export async function get({ query }: IncomingRequest): Promise<EndpointOutput> {
 	if (!id) {
 		return { status: 400 };
 	}
-
-	const url = `http://127.0.0.1:8000/puzzles/${id}`;
+	const BASE_URL = process.env.API_URL || 'http://127.0.0.1:8000';
+	const url = `${BASE_URL}/${id}`;
 	const res = await fetch(url);
 
 	if (res.ok) {

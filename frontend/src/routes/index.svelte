@@ -23,6 +23,7 @@
 	<div class="min-h-screen text-white">
 		<h1 class="pt-4 text-center text-secondary uppercase font-semibold text-4xl">Mseto</h1>
 		<a
+			sveltekit:prefetch
 			href="/puzzle"
 			class="h-32 w-5/6 mt-32 bg-white mx-auto flex flex-col items-center justify-center text-primary rounded-md"
 		>

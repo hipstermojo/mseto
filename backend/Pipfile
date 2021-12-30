@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 aerich = "==0.6.1"
 fastapi = "==0.70.1"
-tortoise-orm = "==0.17.8"
+tortoise-orm = {version = "==0.17.8", extras = ["asyncpg"]}
 uvicorn = {version = "==0.16.0", extras = ["standard"]}
 
 [dev-packages]

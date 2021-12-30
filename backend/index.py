@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -7,8 +9,13 @@ from core.lib import AlwaysBadlyShuffledError, InsufficientWordsProvidedError
 from core.routes import router
 from core.settings import DATABASE_URL
 
+ENV = os.environ.get('ENV') or 'dev'
+
 origins = ['http://127.0.0.1:3000',
-           'http://localhost:3000', 'http://192.168.1.11:3000', ]
+           'http://localhost:3000', 'http://192.168.1.11:3000']
+
+if ENV == 'prod':
+    origins.append('https://mseto.hipstermojo.xyz')
 
 app = FastAPI()
 

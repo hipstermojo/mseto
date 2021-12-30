@@ -5,6 +5,7 @@ from tortoise.contrib.fastapi import register_tortoise
 
 from core.lib import AlwaysBadlyShuffledError, InsufficientWordsProvidedError
 from core.routes import router
+from core.settings import DATABASE_URL
 
 origins = ['http://127.0.0.1:3000',
            'http://localhost:3000', 'http://192.168.1.11:3000', ]
@@ -30,7 +31,6 @@ def insufficient_words_provided_handler(req: Request, exc: InsufficientWordsProv
     return JSONResponse(status_code=400, content={"message": exc.message})
 
 
-register_tortoise(app, db_url="sqlite://db.sqlite3",
+register_tortoise(app, db_url=DATABASE_URL,
                   modules={"models": ["core.models"]},
-                  generate_schemas=True,
                   add_exception_handlers=True,)

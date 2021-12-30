@@ -3,19 +3,6 @@ import random
 from typing import List, Set
 
 
-words = [
-    "haswa",
-    "jioni",
-    "kadha",
-    "kambi",
-    "miaka",
-    "mrefu",
-    "uvumi",
-    "vibao",
-    "zaidi"
-]
-
-
 def get_all_possible_words(cols: List[Set[str]]) -> List[str]:
     return [''.join(row) for row in product(*cols)]
 
@@ -35,6 +22,22 @@ def get_cols_from_words(words: List[str]) -> List[Set[str]]:
         for i, c in enumerate(word):
             cols_set[i].add(c)
     return cols_set
+
+
+class AlwaysBadlyShuffledError(Exception):
+    def __init__(self) -> None:
+        self.message = "Words provided create a puzzle that solves itself whichever way it is shuffled vertically"
+
+
+class InsufficientWordsProvidedError(Exception):
+    def __init__(self) -> None:
+        self.message = "Puzzle creation requires more than one unique word to be provided"
+
+
+def can_be_shuffled(valid_words: List[str], all_possible_words: List[str]) -> bool:
+    """Checks whether a given puzzle can be shuffled such that
+    the 'middle line' is a word that doesn't exist"""
+    return len(valid_words) < len(all_possible_words)
 
 
 def shuffle_cols(cols: List[Set[str]], all_words: Set[str]) -> List[List[str]]:

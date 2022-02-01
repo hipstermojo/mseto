@@ -2,10 +2,11 @@ from datetime import date, timedelta
 from typing import List
 from uuid import UUID
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, HTTPException
 from fastapi.param_functions import Path
-from core.db import add_new_puzzle
+from tortoise.contrib.fastapi import HTTPNotFoundError
 
+from core.db import add_new_puzzle
 from core.lib import InsufficientWordsProvidedError, get_cols_from_words, shuffle_cols
 from core.models import Puzzle, Word, Pack, WordPuzzle
 from core.schema import PackIn, PuzzleData, PackOut, PuzzleIn, PuzzleOut
@@ -16,6 +17,8 @@ router = APIRouter()
 @router.get("/puzzles/{id}", response_model=PuzzleData, tags=['puzzles'])
 async def get_puzzle_data(id: UUID):
     puzzle = await Puzzle.get(id=id)
+    if not puzzle:
+        raise HTTPException(status_code=404, detail="Puzzle does not exist")
     words_in_puzzle_rows = await WordPuzzle.filter(puzzle=puzzle)
     core = []
     extra = []
@@ -42,7 +45,14 @@ async def get_daily_puzzle():
     daily_puzzle_pack = await Pack.get(name="daily")
     if daily_puzzle_pack:
         puzzle_today = await daily_puzzle_pack.puzzles.filter(name=today.isoformat()).first()
-        return puzzle_today
+        if puzzle_today:
+            return puzzle_today
+        else:
+            raise HTTPException(
+                status_code=404, detail="Daily puzzle has not been made")
+    else:
+        raise HTTPException(
+            status_code=404, detail="Daily puzzle pack does not exist")
 
 
 @router.get("/packs/{id}", response_model=List[PuzzleOut], tags=['puzzles'])
@@ -50,6 +60,9 @@ async def get_puzzles_from_pack(id: UUID = Path(..., description="Pack ID")):
     pack = await Pack.get(id=id)
     if pack:
         return pack.puzzles
+    else:
+        raise HTTPException(
+            status_code=404, detail="Puzzle pack does not exist")
 
 
 @router.post("/packs", response_model=PackOut, tags=["packs"])

@@ -4,7 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Body, HTTPException
 from fastapi.param_functions import Path
-from tortoise.contrib.fastapi import HTTPNotFoundError
+
 
 from core.db import add_new_puzzle
 from core.lib import InsufficientWordsProvidedError, get_cols_from_words, shuffle_cols
@@ -24,7 +24,7 @@ async def get_puzzle_data(id: UUID):
     extra = []
     for word_puzzle in words_in_puzzle_rows:
         word_qs = word_puzzle.word
-        # While this is perceived as an error, the code actually runs
+        # While this is perceived as a type error, the code actually runs
         word: Word = await word_qs.first()
         if word_puzzle.role == "core":
             core.append(word.text)
@@ -59,7 +59,8 @@ async def get_daily_puzzle():
 async def get_puzzles_from_pack(id: UUID = Path(..., description="Pack ID")):
     pack = await Pack.get(id=id)
     if pack:
-        return pack.puzzles
+        puzzles = await pack.puzzles.all()
+        return puzzles
     else:
         raise HTTPException(
             status_code=404, detail="Puzzle pack does not exist")
@@ -89,12 +90,17 @@ async def create_daily_puzzle(words: List[str]):
     daily_pack = await Pack.get(name="daily")
     pack_id = daily_pack.id
     most_recent_puzzle = await daily_pack.puzzles.order_by('-created').first()
-    name = ""
+    today = date.today()
+    name = today.isoformat()
+
     if most_recent_puzzle:
-        latest_date = date.fromisoformat(most_recent_puzzle.name)
-        day_after_latest = latest_date + timedelta(days=1)
-        name = day_after_latest.isoformat()
-    else:
-        name = date.today().isoformat()
+        try:
+            most_recent_puzzle_date = date.fromisoformat(
+                most_recent_puzzle.name)
+            day_after_most_recent = most_recent_puzzle_date + timedelta(days=1)
+            if day_after_most_recent > today:
+                name = day_after_most_recent.isoformat()
+        except(ValueError):
+            pass
     data = PuzzleIn(name=name, pack_id=pack_id, words=words)
     return await add_new_puzzle(data)

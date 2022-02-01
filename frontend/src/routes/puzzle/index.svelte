@@ -20,7 +20,7 @@
 				id = puzzleID;
 			} else {
 				if (statusMsg[res.status]) {
-					return { status: res.status, error: statusMsg[res.status] };
+					return { status: res.status, error: 'Daily puzzle has not been generated.' };
 				}
 				return { status: res.status };
 			}

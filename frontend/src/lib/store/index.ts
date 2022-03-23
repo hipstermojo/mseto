@@ -70,36 +70,37 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 		running: {
 			on: {
 				MOVE: {
+					target: 'running',
+					actions: assign((context, { colIdx, rowIdx }) => {
+						context.rowPositions[colIdx] = rowIdx;
+						return context;
+					})
+				},
+				CHECK: {
 					target: 'checkIfCompleted',
-					actions: [
-						assign((context, { colIdx, rowIdx }) => {
-							context.rowPositions[colIdx] = rowIdx;
-							return context;
-						}),
-						assign((context, _) => {
-							let word = context.cols.reduce((acc, cur, idx) => {
-								const pos = context.rowPositions[idx];
-								return acc + cur[pos].letter;
-							}, '');
-							if (context.solutions.core.has(word) || context.solutions.extra.has(word)) {
-								context.foundWords.add(word);
+					actions: assign((context, _) => {
+						let word = context.cols.reduce((acc, cur, idx) => {
+							const pos = context.rowPositions[idx];
+							return acc + cur[pos].letter;
+						}, '');
+						if (context.solutions.core.has(word) || context.solutions.extra.has(word)) {
+							context.foundWords.add(word);
 
-								context.wordExists = true;
-								for (let i = 0; i < context.cols.length; i++) {
-									const column = context.cols[i];
-									const pos = context.rowPositions[i];
-									const tile = column[pos];
-									if (!tile.done) {
-										context.tilesCompleted++;
-										tile.done = true;
-									}
+							context.wordExists = true;
+							for (let i = 0; i < context.cols.length; i++) {
+								const column = context.cols[i];
+								const pos = context.rowPositions[i];
+								const tile = column[pos];
+								if (!tile.done) {
+									context.tilesCompleted++;
+									tile.done = true;
 								}
-							} else {
-								context.wordExists = false;
 							}
-							return context;
-						})
-					]
+						} else {
+							context.wordExists = false;
+						}
+						return context;
+					})
 				},
 				EXIT: { target: 'exit', actions: assign(_stopTimer) }
 			}

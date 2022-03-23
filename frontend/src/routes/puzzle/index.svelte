@@ -1,10 +1,10 @@
 <script lang="ts" context="module">
-	import type { LoadInput, LoadOutput } from '@sveltejs/kit';
+	import type { Load } from '@sveltejs/kit';
 
 	import { columnsToTiles } from '$lib/utils/puzzle';
 
-	export async function load({ fetch, page }: LoadInput): Promise<LoadOutput> {
-		let id = page.query.get('id');
+	export const load: Load = async ({ fetch, url }) => {
+		let id = url.searchParams.get('id');
 
 		const statusMsg = {
 			503: 'Unable to reach server',
@@ -26,8 +26,8 @@
 			}
 		}
 
-		const url = `/api/puzzles.json?id=${id}`;
-		const res = await fetch(url);
+		const puzzlesUrl = `/api/puzzles.json?id=${id}`;
+		const res = await fetch(puzzlesUrl);
 
 		if (res.ok) {
 			const data = await res.json();
@@ -41,7 +41,7 @@
 			return { status: res.status, error: statusMsg[res.status] };
 		}
 		return { status: res.status };
-	}
+	};
 </script>
 
 <script lang="ts">

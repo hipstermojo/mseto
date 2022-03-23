@@ -1,14 +1,14 @@
-import type { EndpointOutput, IncomingRequest } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 
-export async function get({ query }: IncomingRequest): Promise<EndpointOutput> {
-	const id = query.get('id');
+export const get: RequestHandler = async ({ url }) => {
+	const id = url.searchParams.get('id');
 	if (!id) {
 		return { status: 400 };
 	}
 	const BASE_URL = process.env['API_URL'] || 'http://127.0.0.1:8000';
-	const url = `${BASE_URL}/puzzles/${id}`;
+	const puzzlesUrl = `${BASE_URL}/puzzles/${id}`;
 
-	const res = await fetch(url);
+	const res = await fetch(puzzlesUrl);
 
 	if (res.ok) {
 		const data = await res.json();
@@ -17,4 +17,4 @@ export async function get({ query }: IncomingRequest): Promise<EndpointOutput> {
 		};
 	}
 	return { status: res.status };
-}
+};

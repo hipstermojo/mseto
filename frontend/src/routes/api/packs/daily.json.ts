@@ -1,6 +1,6 @@
-import type { EndpointOutput, IncomingRequest } from '@sveltejs/kit';
+import type { RequestHandler } from '@sveltejs/kit';
 
-export async function get(_: IncomingRequest): Promise<EndpointOutput> {
+export const get: RequestHandler = async () => {
 	const BASE_URL = process.env['API_URL'] || 'http://127.0.0.1:8000';
 
 	const url = `${BASE_URL}/packs/daily`;
@@ -22,4 +22,4 @@ export async function get(_: IncomingRequest): Promise<EndpointOutput> {
 		}
 		return { status: 500 };
 	}
-}
+};

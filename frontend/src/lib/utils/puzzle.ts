@@ -30,6 +30,7 @@ export const createPuzzle = (
 		startedAt: null,
 		wordExists: false,
 		tilesCompleted: 0,
-		totalTiles: cols.reduce((acc, cur) => acc + cur.length, 0)
+		totalTiles: cols.reduce((acc, cur) => acc + cur.length, 0),
+		colIdx: null
 	};
 };

@@ -21,7 +21,7 @@
 
 	let canvasElem: HTMLElement;
 	let touchStartY: number | undefined;
-	let mouseStartY: number | undefined;
+	let mouseStartY: number | null = null;
 	let movedBy = 0;
 
 	const moveColumn = (distanceMoved: number) => {
@@ -58,9 +58,10 @@
 	const touchStart = (ev: TouchEvent) => {
 		ev.preventDefault();
 		touchStartY = ev.changedTouches[0].clientY;
+		send('MOVE_START', { colIdx: index });
 	};
 
-	const updateOffset = (ev: TouchEvent) => {
+	const touchMove = (ev: TouchEvent) => {
 		ev.preventDefault();
 
 		let touches = ev.changedTouches;
@@ -85,21 +86,37 @@
 	const mouseStart = (ev: MouseEvent) => {
 		ev.preventDefault();
 		mouseStartY = ev.clientY;
+		send('MOVE_START', { colIdx: index });
 	};
 
 	const mouseMove = (ev: MouseEvent) => {
 		ev.preventDefault();
-		if (ev.buttons != 1) {
+		if (
 			// Only compute movements when the primary (left) button is pressed down
+			ev.buttons != 1 ||
+			// Only move the column first clicked on
+			$state.context.colIdx != index
+		) {
 			return;
 		}
-		const { clientY } = ev;
-		moveColumn(clientY - mouseStartY);
+
+		moveColumn(ev.clientY - mouseStartY);
+	};
+
+	const mouseLeave = (ev: MouseEvent) => {
+		ev.preventDefault();
+		if (ev.buttons != 1 || $state.context.colIdx != index) {
+			return;
+		}
+		// Reset the column position if the mouse click goes out of bounds.
+		// The mouseup event cannot be fired if the mouse click is released outside the region of the element
+		const units = Math.floor((ev.clientY - mouseStartY) / 52);
+		realignParent(units);
 	};
 
 	const mouseUp = (ev: MouseEvent) => {
 		ev.preventDefault();
-		if ($state.matches('completed')) {
+		if ($state.context.colIdx != index || $state.matches('completed')) {
 			return;
 		}
 		const endY = ev.clientY;
@@ -109,21 +126,23 @@
 
 	onMount(() => {
 		canvasElem.addEventListener('touchstart', touchStart, false);
-		canvasElem.addEventListener('touchmove', updateOffset, false);
+		canvasElem.addEventListener('touchmove', touchMove, false);
 		canvasElem.addEventListener('touchend', touchEnd, false);
 		canvasElem.addEventListener('mousedown', mouseStart, false);
 		canvasElem.addEventListener('mousemove', mouseMove, false);
 		canvasElem.addEventListener('mouseup', mouseUp, false);
+		canvasElem.addEventListener('mouseleave', mouseLeave, false);
 	});
 
 	onDestroy(() => {
 		if (canvasElem) {
 			canvasElem.removeEventListener('touchstart', touchStart);
-			canvasElem.removeEventListener('touchmove', updateOffset);
+			canvasElem.removeEventListener('touchmove', touchMove);
 			canvasElem.removeEventListener('touchend', touchEnd);
 			canvasElem.removeEventListener('mousedown', mouseStart);
 			canvasElem.removeEventListener('mousemove', mouseMove);
 			canvasElem.removeEventListener('mouseup', mouseUp);
+			canvasElem.removeEventListener('mouseleave', mouseLeave);
 		}
 	});
 </script>

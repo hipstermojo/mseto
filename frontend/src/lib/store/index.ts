@@ -69,6 +69,13 @@ const _puzzleMachine = createMachine<Puzzle, PuzzleEvents>({
 		},
 		running: {
 			on: {
+				MOVE_START: {
+					target: 'running',
+					actions: assign((context, { colIdx }) => {
+						context.colIdx = colIdx;
+						return context;
+					})
+				},
 				MOVE: {
 					target: 'running',
 					actions: assign((context, { colIdx, rowIdx }) => {

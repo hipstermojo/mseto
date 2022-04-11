@@ -1,11 +1,13 @@
+import type { BloomFilter } from 'bloom-filters';
+
 export interface PuzzleTile {
 	letter: string;
 	done: boolean;
 }
 
-export interface Puzzle {
+export interface PuzzleContext {
 	id: string;
-	cols: PuzzleTile[][];
+	tiles: PuzzleTile[][];
 	solutions: { core: Set<string>; extra: Set<string> };
 	wordExists: boolean;
 	foundWords: Set<string>;
@@ -15,4 +17,5 @@ export interface Puzzle {
 	rowPositions: number[];
 	startedAt: Date | null;
 	colIdx: number | null;
+	wordList: BloomFilter;
 }

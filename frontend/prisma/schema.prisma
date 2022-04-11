@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Pack {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  created     DateTime @default(now())
+  puzzles     Puzzle[]
+}
+
+model Puzzle {
+  id      String       @id @default(uuid())
+  name    String?
+  created DateTime     @default(now())
+  packId  String
+  pack    Pack         @relation(fields: [packId], references: [id], onDelete: Cascade)
+  words   WordPuzzle[]
+}
+
+model Word {
+  text    String       @id
+  puzzles WordPuzzle[]
+}
+
+model WordPuzzle {
+  puzzleId String
+  puzzle   Puzzle @relation(fields: [puzzleId], references: [id], onDelete: Cascade)
+  wordId   String
+  word     Word   @relation(fields: [wordId], references: [text], onDelete: Cascade)
+
+  @@id([puzzleId, wordId])
+}

@@ -1,66 +1,84 @@
 <script lang="ts" context="module">
 	import type { Load } from '@sveltejs/kit';
+	import { browser } from '$app/env';
 
-	import { columnsToTiles } from '$lib/utils/puzzle';
+	export const load: Load = async ({ props }) => {
+		const { words } = props;
 
-	export const load: Load = async ({ fetch, url }) => {
-		let id = url.searchParams.get('id');
-
-		const statusMsg = {
-			503: 'Unable to reach server',
-			422: 'Invalid request made to server',
-			404: 'Requested puzzle does not exist'
-		};
-		if (!id) {
-			const url = '/api/packs/daily.json';
-			const res = await fetch(url);
-
-			if (res.ok) {
-				const { id: puzzleID } = await res.json();
-				id = puzzleID;
-			} else {
-				if (statusMsg[res.status]) {
-					return { status: res.status, error: 'Daily puzzle has not been generated.' };
+		if (browser) {
+			let b_filter = localStorage.getItem(BLOOM_FILTER_KEY);
+			if (!b_filter) {
+				const res = await fetch('/b_filter.json');
+				if (res.ok) {
+					b_filter = await res.text();
+					localStorage.setItem(BLOOM_FILTER_KEY, b_filter);
 				}
-				return { status: res.status };
 			}
 		}
+		return { status: 200, props: { words } };
+		// let id = url.searchParams.get('id');
 
-		const puzzlesUrl = `/api/puzzles.json?id=${id}`;
-		const res = await fetch(puzzlesUrl);
+		// const statusMsg = {
+		// 	503: 'Unable to reach server',
+		// 	422: 'Invalid request made to server',
+		// 	404: 'Requested puzzle does not exist'
+		// };
+		// if (!id) {
+		// 	const url = '/api/packs/daily.json';
+		// 	const res = await fetch(url);
 
-		if (res.ok) {
-			const data = await res.json();
+		// 	if (res.ok) {
+		// 		const { id: puzzleID } = await res.json();
+		// 		id = puzzleID;
+		// 	} else {
+		// 		if (statusMsg[res.status]) {
+		// 			return { status: res.status, error: 'Daily puzzle has not been generated.' };
+		// 		}
+		// 		return { status: res.status };
+		// 	}
+		// }
 
-			return {
-				props: { data: { ...data, cols: columnsToTiles(data.cols) } }
-			};
-		}
-
-		if (statusMsg[res.status]) {
-			return { status: res.status, error: statusMsg[res.status] };
-		}
-		return { status: res.status };
+		// if (statusMsg[res.status]) {
+		// 	return { status: res.status, error: statusMsg[res.status] };
+		// }
+		// return { status: res.status };
 	};
 </script>
 
 <script lang="ts">
+	import type { Writable } from 'svelte/store';
+	import BloomFilter from 'bloom-filters/dist/bloom/bloom-filter.js';
+
 	import IconSet from '$lib/components/utils/icons/IconSet.svelte';
 	import GameSummary from '$lib/components/GameSummary.svelte';
 	import PuzzleGrid from '$lib/components/PuzzleGrid.svelte';
 	import ScoreCount from '$lib/components/ScoreCount.svelte';
 
-	import { puzzleMachine } from '$lib/store/index';
-	import { createPuzzle } from '$lib/utils/puzzle';
-	import type { PuzzleTile } from '$lib/utils/types';
+	import { puzzleMachine, bloomFilter } from '$lib/store/index';
+	import { columnsToTiles, createPuzzle, wordsToCols } from '$lib/utils/puzzle';
+	import { BLOOM_FILTER_KEY } from '$lib/utils/constants';
 
-	export let data: { core: string[]; extra: string[]; cols: PuzzleTile[][] };
+	export let words: string[];
 
 	const { state, send } = puzzleMachine;
 	const today = new Date().toDateString();
 
+	const cacheBloomFilter = (cache: Writable<BloomFilter>) => {
+		let filterJSONStr = localStorage.getItem(BLOOM_FILTER_KEY);
+		const bFilter = BloomFilter.fromJSON(JSON.parse(filterJSONStr));
+		cache.set(bFilter);
+	};
+
+	if (browser) {
+		if ($bloomFilter === null) {
+			cacheBloomFilter(bloomFilter);
+		}
+	}
+
 	if ($state.context.totalTiles == 0) {
-		const puzzle = createPuzzle(data.core, data.extra, data.cols);
+		const cols = wordsToCols(words);
+		const tiles = columnsToTiles(cols);
+		const puzzle = createPuzzle(words, $bloomFilter, tiles);
 		send('START', { puzzle });
 	}
 </script>

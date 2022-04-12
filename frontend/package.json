@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "svelte-kit dev",
-		"build": "svelte-kit build",
+		"build": "prisma generate && svelte-kit build",
 		"preview": "svelte-kit preview",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -41,5 +41,9 @@
 		"dayjs": "^1.11.0",
 		"fast-cartesian": "^6.1.0",
 		"xstate": "^4.26.0"
+	},
+	"engines": {
+		"node": "16.x",
+		"npm": "8.x"
 	}
 }

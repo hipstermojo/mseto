@@ -3,7 +3,11 @@
 	import { browser } from '$app/env';
 
 	export const load: Load = async ({ props }) => {
-		const { words } = props;
+		const { words, error } = props;
+
+		if (error) {
+			return { status: 400, error };
+		}
 
 		if (browser) {
 			let b_filter = localStorage.getItem(BLOOM_FILTER_KEY);
@@ -16,32 +20,6 @@
 			}
 		}
 		return { status: 200, props: { words } };
-		// let id = url.searchParams.get('id');
-
-		// const statusMsg = {
-		// 	503: 'Unable to reach server',
-		// 	422: 'Invalid request made to server',
-		// 	404: 'Requested puzzle does not exist'
-		// };
-		// if (!id) {
-		// 	const url = '/api/packs/daily.json';
-		// 	const res = await fetch(url);
-
-		// 	if (res.ok) {
-		// 		const { id: puzzleID } = await res.json();
-		// 		id = puzzleID;
-		// 	} else {
-		// 		if (statusMsg[res.status]) {
-		// 			return { status: res.status, error: 'Daily puzzle has not been generated.' };
-		// 		}
-		// 		return { status: res.status };
-		// 	}
-		// }
-
-		// if (statusMsg[res.status]) {
-		// 	return { status: res.status, error: statusMsg[res.status] };
-		// }
-		// return { status: res.status };
 	};
 </script>
 

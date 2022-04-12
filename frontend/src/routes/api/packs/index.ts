@@ -23,24 +23,24 @@ export const post: RequestHandler = async ({ request, locals: { prisma } }) => {
 
 	if (uniqueWords.length < 2) {
 		return {
-			status: 401,
+			status: 400,
 			body: { err: 'Puzzle creation requires more than one unique word to be provided' }
 		};
 	} else if (uniqueWords.length > 7) {
 		return {
-			status: 401,
+			status: 400,
 			body: { err: 'Too many words provided. Maximum allowed words is 7' }
 		};
 	}
 	const wordLength = uniqueWords[0].length;
 	if (wordLength < 4 || wordLength > 7) {
-		return { status: 401, body: { err: 'Words must have a length between 4 and 7 inclusive' } };
+		return { status: 400, body: { err: 'Words must have a length between 4 and 7 inclusive' } };
 	}
 
 	const isSameLength = uniqueWords.every((word) => word.length == wordLength);
 	if (!isSameLength) {
 		return {
-			status: 401,
+			status: 400,
 			body: { err: 'Words must be of the same length' }
 		};
 	}
@@ -49,7 +49,7 @@ export const post: RequestHandler = async ({ request, locals: { prisma } }) => {
 
 	if (hasInvalidSwahili) {
 		return {
-			status: 401,
+			status: 400,
 			body: { err: 'Words must all be valid Swahili words.' }
 		};
 	}
@@ -63,7 +63,7 @@ export const post: RequestHandler = async ({ request, locals: { prisma } }) => {
 
 	if (invalidCount == 0) {
 		return {
-			status: 401,
+			status: 400,
 			body: { err: 'Word input solves itself in any combination' }
 		};
 	}

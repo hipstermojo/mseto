@@ -15,5 +15,6 @@ export const get: RequestHandler = async ({ locals: { prisma } }) => {
 		return { status: 200, body: { words } };
 	}
 
-	return { status: 404, body: { message: 'Daily puzzle not generated' } };
+	// TODO: Change this back to a 404 once it is possible to send error messages to the __error.svelte page
+	return { status: 200, body: { error: 'Daily puzzle not generated' } };
 };

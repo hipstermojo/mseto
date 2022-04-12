@@ -3,14 +3,16 @@ import type { RequestHandler } from '@sveltejs/kit';
 import { readFileSync } from 'fs';
 
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { BloomFilter } from 'bloom-filters';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
+
+import bloomFiltersPkg from 'bloom-filters';
 
 import { DAILY_PUZZLE_DATE_FORMAT, DAILY_PUZZLE_PACK } from '$lib/utils/constants';
 import { allPossibleWordsFromCols, wordsToCols } from '$lib/utils/puzzle';
 
 dayjs.extend(customParseFormat);
 
+const { BloomFilter } = bloomFiltersPkg;
 const filter_export = readFileSync('./static/b_filter.json', { encoding: 'utf-8' });
 const SWAHILI_WORDS = BloomFilter.fromJSON(JSON.parse(filter_export));
 

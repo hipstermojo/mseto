@@ -66,6 +66,10 @@
 	};
 </script>
 
-<button on:click={() => solveWord()} class="bg-white mt-2 py-2 px-4 uppercase">
-	Tap for a hint
+<button
+	on:click={() => solveWord()}
+	class:bg-opacity-50={$state.matches('completed')}
+	class="bg-white mt-2 py-2 px-4 uppercase"
+>
+	{$state.matches('completed') ? 'All done!' : 'Tap for a Hint'}
 </button>

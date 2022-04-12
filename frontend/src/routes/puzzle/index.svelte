@@ -30,6 +30,7 @@
 	import IconSet from '$lib/components/utils/icons/IconSet.svelte';
 	import GameSummary from '$lib/components/GameSummary.svelte';
 	import PuzzleGrid from '$lib/components/PuzzleGrid.svelte';
+	import PuzzleHint from '$lib/components/PuzzleHint.svelte';
 	import ScoreCount from '$lib/components/ScoreCount.svelte';
 
 	import { puzzleMachine, bloomFilter } from '$lib/store/index';
@@ -70,8 +71,9 @@
 		<a href="/" title="back to main page" class="pl-8">
 			<IconSet type="arrow-back" />
 		</a>
-		<div class="pr-8">
+		<div class="pr-8 pb-8">
 			<ScoreCount />
+			<PuzzleHint />
 		</div>
 		<div class="h-6 absolute -bottom-6 w-full bg-gradient-to-b from-primary to-transparent" />
 	</div>

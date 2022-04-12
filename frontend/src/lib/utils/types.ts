@@ -1,4 +1,5 @@
 import type { BloomFilter } from 'bloom-filters';
+import type { Spring } from 'svelte/motion';
 
 export interface PuzzleTile {
 	letter: string;
@@ -18,4 +19,5 @@ export interface PuzzleContext {
 	startedAt: Date | null;
 	colIdx: number | null;
 	wordList: BloomFilter;
+	columnSprings: Spring<number>[];
 }

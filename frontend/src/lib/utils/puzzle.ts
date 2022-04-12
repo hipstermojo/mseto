@@ -2,6 +2,7 @@ import type { PuzzleContext, PuzzleTile } from './types';
 
 import fastCartesian from 'fast-cartesian';
 import type { BloomFilter } from 'bloom-filters';
+import { spring } from 'svelte/motion';
 
 export const columnsToTiles = (columns: string[][]): PuzzleTile[][] => {
 	return columns.map((col) =>
@@ -58,6 +59,10 @@ export const createPuzzle = (
 	tiles: PuzzleTile[][] = []
 ): PuzzleContext => {
 	const today = new Date();
+	const midPoints = tiles.reduce((acc: number[], cur) => {
+		acc.push(Math.floor(cur.length / 2));
+		return acc;
+	}, []);
 	return {
 		id: today.toDateString(),
 		tiles,
@@ -67,15 +72,22 @@ export const createPuzzle = (
 			extra: new Set()
 		},
 		foundWords: new Set(),
-		rowPositions: tiles.reduce((acc: number[], cur) => {
-			acc.push(Math.floor(cur.length / 2));
-			return acc;
-		}, []),
+		rowPositions: midPoints,
 		startedAt: null,
 		wordExists: false,
 		tilesCompleted: 0,
 		totalTiles: tiles.reduce((acc, cur) => acc + cur.length, 0),
 		colIdx: null,
-		wordList
+		wordList,
+		columnSprings: midPoints.map((midPoint) =>
+			spring(52 * -midPoint, { stiffness: 0.2, damping: 0.45 })
+		)
 	};
+};
+
+export const getDisplayWord = (context: PuzzleContext): string => {
+	return context.tiles.reduce((acc, cur, idx) => {
+		const pos = context.rowPositions[idx];
+		return acc + cur[pos].letter;
+	}, '');
 };

@@ -4,7 +4,7 @@ import type { EventObject, StateMachine } from 'xstate';
 import { createMachine, interpret } from 'xstate';
 
 import type { PuzzleContext } from '$lib/utils/types';
-import { createPuzzle } from '$lib/utils/puzzle';
+import { createPuzzle, getDisplayWord } from '$lib/utils/puzzle';
 
 import type { PuzzleEvents } from './types';
 import type { BloomFilter } from 'bloom-filters';
@@ -84,13 +84,18 @@ const _puzzleMachine = createMachine<PuzzleContext, PuzzleEvents>({
 						return context;
 					})
 				},
+				ALIGN: {
+					target: 'running',
+					actions: assign((context, { colIdx, rowIdx, moveFn, soft = false }) => {
+						context.rowPositions[colIdx] = rowIdx;
+						context.columnSprings[colIdx].update(moveFn, { soft });
+						return context;
+					})
+				},
 				CHECK: {
 					target: 'checkIfCompleted',
 					actions: assign((context, _) => {
-						let word = context.tiles.reduce((acc, cur, idx) => {
-							const pos = context.rowPositions[idx];
-							return acc + cur[pos].letter;
-						}, '');
+						let word = getDisplayWord(context);
 						if (context.wordList.has(word)) {
 							context.foundWords.add(word);
 							if (!context.solutions.core.has(word)) {

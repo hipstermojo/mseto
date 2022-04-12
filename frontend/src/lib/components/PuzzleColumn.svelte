@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { spring } from 'svelte/motion';
 
 	import type { PuzzleTile } from '$lib/utils/types';
 	import { puzzleMachine } from '$lib/store/index';
@@ -17,7 +16,7 @@
 
 	$: highlighted = $state.context.wordExists;
 	$: rowPos = -midPoint;
-	let offset = spring(52 * -midPoint, { stiffness: 0.2, damping: 0.45 });
+	let offset = $state.context.columnSprings[index];
 
 	let canvasElem: HTMLElement;
 	let touchStartY: number | undefined;
@@ -50,9 +49,8 @@
 		}
 
 		rowPos = newPos;
-		send('MOVE', { colIdx: index, rowIdx: -rowPos });
+		send('ALIGN', { colIdx: index, rowIdx: -rowPos, moveFn: (_) => 52 * rowPos });
 		send('CHECK');
-		offset.set(52 * rowPos);
 	};
 
 	const touchStart = (ev: TouchEvent) => {

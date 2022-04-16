@@ -87,7 +87,7 @@ export const post: RequestHandler = async ({ request, locals: { prisma } }) => {
 	let puzzleDate = dayjs();
 	if (
 		latestDailyPuzzle &&
-		dayjs(latestDailyPuzzle.name, DAILY_PUZZLE_DATE_FORMAT).isAfter(puzzleDate, 'day')
+		!puzzleDate.isAfter(dayjs(latestDailyPuzzle.name, DAILY_PUZZLE_DATE_FORMAT), 'day')
 	) {
 		puzzleDate = dayjs(latestDailyPuzzle.name, DAILY_PUZZLE_DATE_FORMAT).add(1, 'day');
 	}
